@@ -4,6 +4,7 @@ import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import path from "path";
+
 import "./passport/github.auth.js";
 
 import userRoutes from "./routes/user.route.js";
@@ -21,17 +22,15 @@ const __dirname = path.resolve();
 app.use(
   session({ secret: "keyboard cat", resave: false, saveUninitialized: false })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Uncomment this if you need CORS for development
-// app.use(cors());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/explore", exploreRoutes);
 
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
+app.use(express.static(path.join(__dirname, "/frontend/dist")));
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
@@ -39,11 +38,5 @@ app.get("*", (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server started on http://localhost:${PORT}`);
-  connectMongoDB()
-    .then(() => {
-      console.log("Connected to MongoDB");
-    })
-    .catch((err) => {
-      console.error("Failed to connect to MongoDB", err);
-    });
+  connectMongoDB();
 });
